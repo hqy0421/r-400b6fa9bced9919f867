@@ -1,3 +1,9 @@
+# poorman (development version)
+
+## New features
+
+* `sqlite_csv_load()` loads a fixed CSV file into a SQLite table with crash-safe, resumable progress. Each source logical record (newlines inside quoted fields do not split records) is coerced to its declared column type and run through per-column `cleaners`, a `row_cleaner` and/or an `expander`, so one record may produce zero, one or many target rows. Batching is by source logical record and each batch is committed in one SQLite transaction; a failed or incomplete batch is rolled back without advancing the committed prefix, and a filtering record still advances it. On reopen the whole file is re-parsed and the committed record prefix is skipped by logical record count, never by physical line or target row. Stored progress is rejected when the file checksum, parsing options, declared column types or cleaning declarations change; use `restart = TRUE` or `sqlite_csv_reset()` to rebuild. `sqlite_csv_status()` and `sqlite_csv_reset()` inspect and discard progress. The loaded data is read back with declared types restored (including `logical` stored as integer `0`/`1`) and can be piped straight into `group_by()`/`summarise()`. `DBI` and `RSQLite` are suggested, not required, packages.
+
 # poorman 0.3.1
 
 ## Improvements
